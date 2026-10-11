@@ -2,10 +2,16 @@
   "name": "poly-center-mali",
   "type": "module",
   "version": "1.0.0",
-  "scripts": { "dev": "astro dev", "build": "astro build", "preview": "astro preview" },
-  "dependencies": { "astro": "^5.0.0" },
-  "allowScripts": {
-    "esbuild": true,
-    "sharp": true
+  "private": true,
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "dev": "node ./node_modules/astro/astro.js dev",
+    "build": "node ./node_modules/astro/astro.js build",
+    "preview": "node ./node_modules/astro/astro.js preview"
+  },
+  "dependencies": {
+    "astro": "^5.0.0"
   }
 }

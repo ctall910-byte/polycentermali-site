@@ -1,12 +1,13 @@
-# Dépendances installées pour le système local uniquement.
+# dépendances (ne jamais les envoyer sur GitHub / Vercel)
 node_modules/
 
-# Fichiers générés par Astro.
+# résultat du build
 dist/
 .astro/
-
-# Fichiers et paramètres propres à Vercel.
 .vercel/
 
-# Journaux npm.
+# divers
+.DS_Store
 npm-debug.log*
+.env
+.env.*
