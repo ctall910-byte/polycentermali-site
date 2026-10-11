@@ -1,0 +1,12 @@
+# Dépendances installées pour le système local uniquement.
+node_modules/
+
+# Fichiers générés par Astro.
+dist/
+.astro/
+
+# Fichiers et paramètres propres à Vercel.
+.vercel/
+
+# Journaux npm.
+npm-debug.log*
