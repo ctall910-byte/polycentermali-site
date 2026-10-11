@@ -1,0 +1,28 @@
+---
+import Base from '../layouts/Base.astro';
+import Formations from '../components/Formations.astro';
+import { formations } from '../data/site.js';
+const cats = [
+  { id: 'prog', label: 'Programmes spéciaux' }, { id: 'tech', label: 'Technique et énergie' }, { id: 'gestion', label: 'Gestion et finance' },
+  { id: 'com', label: 'Communication' }, { id: 'num', label: 'Numérique et langues' },
+];
+---
+<Base title="Formations" description="Catalogue des formations de Poly-Center Mali.">
+  <div class="title"><div class="wrap"><h1>Nos formations</h1><p>{formations.length} formations. Cliquez sur l’une d’elles pour voir son programme, ses modalités et son tarif.</p></div></div>
+  <section><div class="wrap">
+    <div class="filters" role="group" aria-label="Filtrer les formations">
+      <button class="chipb on" data-f="all">Toutes <small>{formations.length}</small></button>
+      {cats.map((c) => <button class="chipb" data-f={c.id}>{c.label} <small>{formations.filter((f) => f.cat === c.id).length}</small></button>)}
+    </div>
+    <Formations />
+    <p class="lead rv" style="margin-top:36px">Nos formations sont proposées en présentiel et en ligne, en groupe ou à titre individuel. Un programme que vous ne voyez pas ? Contactez-nous : nous le construisons sur mesure.</p>
+  </div></section>
+  <section class="cta"><div class="wrap"><h2>Inscrivez-vous ou formez votre équipe.</h2><p class="lead">Nous adaptons le programme à votre niveau et à vos objectifs.</p><div class="cta-row"><a class="btn" href="/contact">S’inscrire</a></div></div></section>
+</Base>
+<script>
+  const chips = document.querySelectorAll<HTMLElement>('.chipb');
+  chips.forEach((c) => c.addEventListener('click', () => {
+    chips.forEach((x) => x.classList.toggle('on', x === c));
+    document.querySelectorAll<HTMLElement>('.fcard').forEach((k) => { k.hidden = c.dataset.f !== 'all' && k.dataset.cat !== c.dataset.f; });
+  }));
+</script>

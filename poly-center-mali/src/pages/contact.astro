@@ -1,0 +1,82 @@
+---
+import Base from '../layouts/Base.astro';
+import SocialIcon from '../components/SocialIcon.astro';
+import { site, reseaux, formations } from '../data/site.js';
+import { services } from '../data/services.js';
+const tel = (t) => `tel:${t.replace(/\s/g, '')}`;
+const couleurs = { TikTok: '#25f4ee', Instagram: '#d62976', Facebook: '#1877f2', X: '#555' };
+const objets = ['M’inscrire à une formation', 'Réserver un entretien ou un rendez-vous', 'Demander un devis', 'Poser une question', 'Autre demande'];
+---
+<Base title="Contact" description="Contacter Poly-Center Mali à Niamakoro, Bamako.">
+  <div class="title"><div class="wrap"><h1>Contact</h1><p>Choisissez le moyen le plus simple pour vous.</p><a class="btn" style="margin-top:22px" href="#formulaire">Remplir le formulaire</a></div></div>
+  <section><div class="wrap"><div class="contact">
+    <div class="card rv"><h3>Téléphone</h3>{site.telephones.map((t) => <a class="tel" href={tel(t)}>{t}</a>)}</div>
+    <a class="card navy rv" style="--i:1" href={`https://wa.me/${site.whatsapp}`}><h3>WhatsApp</h3><p>Écrivez-nous au {site.telephones[0]}</p></a>
+    <a class="card rv" style="--i:2" href={`mailto:${site.email}`}><h3>E-mail</h3><p>{site.email}</p></a>
+    <div class="card navy rv" style="--i:3"><h3>Adresse</h3><p>{site.adresse}</p></div>
+  </div></div></section>
+
+  <section class="soft"><div class="wrap">
+    <div class="head rv"><h2>Suivez-nous</h2><p>Nos formations, nos réalisations et nos annonces sur les réseaux sociaux.</p></div>
+    <div class="socs">{reseaux.map((r, i) => {
+      const Tag = r.url ? 'a' : 'div';
+      return (
+        <Tag class={`soc rv${r.url ? '' : ' off'}`} style={`--i:${i};--c:${couleurs[r.nom] || '#ee7b1e'}`} href={r.url || undefined} target={r.url ? '_blank' : undefined} rel={r.url ? 'noopener' : undefined} aria-label={r.nom}>
+          <span class="soc-ico"><SocialIcon name={r.nom} size={78} /></span>
+          <b>{r.nom}</b>
+          <span class="soc-h">{r.url ? (r.handle || 'Suivre le compte') : (r.handle || 'Bientôt disponible')}</span>
+        </Tag>);
+    })}</div>
+  </div></section>
+
+  <section id="formulaire"><div class="wrap">
+    <div class="head rv"><h2>Écrivez-nous</h2><p>Une inscription, un rendez-vous, un devis ? Remplissez ce petit formulaire : nous vous répondons rapidement.</p></div>
+    <form class="cform rv" id="cform" data-email={site.emailFormulaire} data-wa={site.whatsapp}>
+      <label>Je souhaite
+        <select name="objet" required>{objets.map((o) => <option value={o}>{o}</option>)}</select></label>
+      <label>Formation ou service concerné <small>(facultatif)</small>
+        <select name="sujet"><option value="">Choisir dans la liste…</option>
+          <optgroup label="Formations">{formations.map((f) => <option value={`Formation : ${f.t}`}>{f.t}</option>)}</optgroup>
+          <optgroup label="Services">{services.map((s) => <option value={`Service : ${s.t}`}>{s.t}</option>)}</optgroup></select></label>
+      <label>Nom complet<input name="nom" required autocomplete="name" /></label>
+      <label>Téléphone ou WhatsApp<input name="telephone" type="tel" required autocomplete="tel" placeholder="+223 …" /></label>
+      <label>E-mail <small>(facultatif)</small><input name="email" type="email" autocomplete="email" /></label>
+      <label>Date ou période souhaitée <small>(facultatif)</small><input name="date" placeholder="Ex : samedi matin, début novembre…" /></label>
+      <label class="full">Votre message <small>(facultatif)</small><textarea name="message" rows="4"></textarea></label>
+      <input class="hp" type="text" name="_honey" tabindex="-1" autocomplete="off" aria-hidden="true" />
+      <button class="btn" type="submit">Envoyer ma demande</button>
+      <p class="fstatus" role="status" aria-live="polite"></p>
+    </form>
+    <div class="fok" id="fok" hidden>
+      <svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="29"/><path d="M19 33l9 9 18-20"/></svg>
+      <h3 style="margin-top:14px">Merci, votre demande est envoyée !</h3>
+      <p class="lead" style="margin:10px auto 0">Nous vous répondons très vite par téléphone ou par WhatsApp.</p>
+    </div>
+  </div></section>
+</Base>
+<script>
+  const f = document.getElementById('cform') as HTMLFormElement | null;
+  if (f) {
+    const btn = f.querySelector('button[type=submit]') as HTMLButtonElement, st = f.querySelector('.fstatus') as HTMLElement;
+    f.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const fd = new FormData(f);
+      if (fd.get('_honey')) return;
+      const d: Record<string, string> = {};
+      fd.forEach((v, k) => { const s = String(v).trim(); if (k !== '_honey' && s) d[k] = s; });
+      const sujet = d.sujet ? ` (${d.sujet})` : '';
+      d._subject = `Demande depuis le site : ${d.objet}${sujet}`; d._template = 'table'; d._captcha = 'false';
+      btn.disabled = true; st.className = 'fstatus'; st.textContent = 'Envoi en cours…';
+      try {
+        const r = await fetch('https://formsubmit.co/ajax/' + f.dataset.email, { method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, body: JSON.stringify(d) });
+        const j = await r.json();
+        if (!r.ok || !(j.success === true || j.success === 'true')) throw new Error('echec');
+        f.hidden = true; const ok = document.getElementById('fok')!; ok.hidden = false; ok.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      } catch {
+        const msg = `Bonjour, ${d.objet}.${d.sujet ? ' ' + d.sujet + '.' : ''} Nom : ${d.nom}. Téléphone : ${d.telephone}.${d.message ? ' ' + d.message : ''}`;
+        st.className = 'fstatus err';
+        st.innerHTML = `L’envoi n’a pas abouti. Écrivez-nous directement : <a target="_blank" rel="noopener" href="https://wa.me/${f.dataset.wa}?text=${encodeURIComponent(msg)}">envoyer sur WhatsApp</a>.`;
+      } finally { btn.disabled = false; }
+    });
+  }
+</script>

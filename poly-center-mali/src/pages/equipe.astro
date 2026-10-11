@@ -1,0 +1,27 @@
+---
+import Base from '../layouts/Base.astro';
+import { team } from '../data/team.js';
+---
+<Base title="Notre équipe" description="Les membres de l’équipe Poly-Center Mali.">
+  <div class="title"><div class="wrap"><h1>Notre équipe</h1><p>Des compétences complémentaires en technique, en finance et en formation, au service de votre réussite.</p></div></div>
+  <section><div class="wrap"><div class="team">
+    {team.map((m, i) => (
+      <article class="member rv" style={`--i:${i % 2}`}>
+        <div class="m-photos" data-slider>
+          {m.photos.length
+            ? m.photos.map((p, k) => <img class={k === 0 ? 'on' : ''} src={`/equipe/${p[0]}`} alt={`${m.name}, photo ${k + 1}`} style={`object-position:${p[1]}`} loading={i < 2 ? 'eager' : 'lazy'} />)
+            : <div class="avatar">{m.initials}</div>}
+          {m.photos.length > 1 && <div class="dots">{m.photos.map((_, k) => <button aria-label={`Photo ${k + 1}`} class={k === 0 ? 'on' : ''}></button>)}</div>}
+        </div>
+        <div class="m-body">
+          <h2>{m.name}</h2>
+          <p class="role">{m.role}</p>
+          <p class="bio">{m.bio}</p>
+          <p class="devise">« {m.devise} »</p>
+          <ul class="chips">{m.chips.map((c) => <li>{c}</li>)}</ul>
+        </div>
+      </article>
+    ))}
+  </div></div></section>
+  <section class="cta"><div class="wrap"><h2>Travaillons ensemble.</h2><p class="lead">Une question, un projet, une formation à organiser ? Notre équipe vous répond.</p><div class="cta-row"><a class="btn" href="/contact">Nous contacter</a></div></div></section>
+</Base>

@@ -1,0 +1,50 @@
+---
+import { site, promo } from '../data/site.js';
+const wa = `https://wa.me/${site.whatsapp}?text=${encodeURIComponent('Bonjour, je souhaite m’inscrire maintenant à ' + (promo.formation || 'la formation en cours') + ' pour bénéficier de la réduction.')}`;
+---
+{promo.actif && (
+  <aside id="pm" class="pm" data-fin={promo.finOffre} data-retour={promo.retourApresSecondes} aria-label="Offre d’inscription">
+    <button class="pm-pill" aria-label="Voir l’offre d’inscription"><i class="pm-dot"></i><span><span class="lg">Formation </span>en cours</span><b class="pm-tag">{promo.reduction || 'PROMO'}</b></button>
+    <div class="pm-card" hidden>
+      <button class="pm-x" aria-label="Réduire">×</button>
+      <span class="pm-live"><i class="pm-dot"></i> En cours</span>
+      <h4>Formation en cours</h4>
+      {promo.formation && <p class="pm-name">{promo.formation}</p>}
+      <p>Inscrivez-vous <b>maintenant</b> et bénéficiez d’une <b>réduction</b>.</p>
+      <div class="count" hidden></div>
+      <a class="btn pm-btn" href={wa} target="_blank" rel="noopener">Je m’inscris</a>
+    </div>
+    <button class="pm-bub" aria-label="Voir l’offre" hidden>🔥</button>
+  </aside>
+)}
+<script>
+  const box = document.getElementById('pm') as HTMLElement | null;
+  if (box) {
+    const pill = box.querySelector('.pm-pill') as HTMLElement, card = box.querySelector('.pm-card') as HTMLElement, bub = box.querySelector('.pm-bub') as HTMLElement;
+    const RETOUR = (Number(box.dataset.retour) || 60) * 1000;
+    let st = 'pill', since = 0, timer: any = 0;
+    try { st = sessionStorage.getItem('pm-st') || 'pill'; since = Number(sessionStorage.getItem('pm-t')) || 0; } catch {}
+    const set = (s: string) => {
+      st = s; pill.hidden = s !== 'pill'; card.hidden = s !== 'open'; bub.hidden = s !== 'bub';
+      try { sessionStorage.setItem('pm-st', s); if (s === 'bub') sessionStorage.setItem('pm-t', String(Date.now())); } catch {}
+      clearTimeout(timer);
+      if (s === 'bub') timer = setTimeout(() => set('pill'), RETOUR);
+    };
+    if (st === 'bub') { const left = since + RETOUR - Date.now(); if (left > 0) { set('bub'); clearTimeout(timer); timer = setTimeout(() => set('pill'), left); } else set('pill'); } else set(st);
+    pill.addEventListener('click', () => set('open'));
+    box.querySelector('.pm-x')?.addEventListener('click', () => set('bub'));
+    bub.addEventListener('click', () => set('pill'));
+    const fin = box.dataset.fin ? new Date(box.dataset.fin).getTime() : 0;
+    const c = box.querySelector('.count') as HTMLElement;
+    if (fin && c) {
+      const tick = () => {
+        const d = fin - Date.now();
+        if (d <= 0) { c.hidden = true; return; }
+        const u = [[864e5, 'j'], [36e5, 'h'], [6e4, 'min'], [1e3, 's']] as const;
+        let r = d; c.hidden = false;
+        c.innerHTML = u.map(([n, l]) => { const v = Math.floor(r / n); r -= v * n; return `<span><b>${String(v).padStart(2, '0')}</b>${l}</span>`; }).join('');
+      };
+      tick(); setInterval(tick, 1000);
+    }
+  }
+</script>

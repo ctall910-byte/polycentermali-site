@@ -1,0 +1,40 @@
+---
+import Icon from './Icon.astro';
+import { site, formations } from '../data/site.js';
+const { list = formations } = Astro.props;
+const genre = { Programme: 'au programme', Certification: 'à la certification', Académie: 'à l’académie' };
+const wa = (f) => `https://wa.me/${site.whatsapp}?text=${encodeURIComponent(`Bonjour, je souhaite m’inscrire ${genre[f.etiquette] || 'à la formation'} « ${f.t} ».`)}`;
+---
+<div class="grid fgrid">
+  {list.map((f, i) => (
+    <article class="card fcard rv" style={`--i:${i % 4}`} data-cat={f.cat} data-open={`f-${f.id}`} >
+      {f.image ? <div class="fphoto"><img src={f.imagePath + f.image} alt="" loading="lazy" style={f.imagePos ? `object-position:${f.imagePos}` : ''} /></div> : <div class="ill small"><Icon name={f.icon} size={84} /></div>}
+      <h3>{f.t}</h3>
+      <p>{f.d}</p>
+      <div class="facts">
+        <button class="more" type="button" aria-haspopup="dialog">Voir les détails <b>→</b></button>
+        <a class="btn mini" href={wa(f)} target="_blank" rel="noopener">M’inscrire</a>
+      </div>
+    </article>
+  ))}
+</div>
+{list.map((f) => (
+  <dialog id={`f-${f.id}`} class="dlg" aria-label={f.t}>
+    <button class="x" data-close aria-label="Fermer">×</button>
+    <div class="dhead"><div class="ill small"><Icon name={f.icon} size={70} /></div><div><span class="pill">{f.etiquette || 'Formation'}</span><h2>{f.t}</h2></div></div>
+    <p class="lead">{f.d}</p>
+    <dl class="info">
+      <div><dt>Public</dt><dd>{f.public}</dd></div>
+      <div><dt>Modalités</dt><dd>{f.modalites}</dd></div>
+      <div><dt>Durée</dt><dd>{f.duree}</dd></div>
+      <div><dt>Format</dt><dd>{f.format}</dd></div>
+      <div class="full"><dt>Tarif</dt><dd>{f.prix}</dd></div>
+    </dl>
+    {f.note && <p class="note">{f.note}</p>}
+    <div class="two">
+      <div><h4>Objectifs</h4><ul class="ticks">{f.objectifs.map((o) => <li>{o}</li>)}</ul></div>
+      <div><h4>Programme</h4><ul class="ticks">{f.programme.map((o) => <li>{o}</li>)}</ul></div>
+    </div>
+    <div class="cta-row"><a class="btn" href={wa(f)} target="_blank" rel="noopener">M’inscrire sur WhatsApp</a><a class="btn alt" href="/contact">Demander un devis</a></div>
+  </dialog>
+))}

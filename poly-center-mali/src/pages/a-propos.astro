@@ -1,0 +1,63 @@
+---
+import Base from '../layouts/Base.astro';
+import Icon from '../components/Icon.astro';
+import { site, formations } from '../data/site.js';
+import { services } from '../data/services.js';
+import { team } from '../data/team.js';
+const stats = [[formations.length, 'formations'], [services.length, 'services'], [team.length, 'experts'], [2, 'pôles : technique et gestion']];
+const valeurs = [['bolt', 'Compétence', 'Des formateurs et des techniciens qui pratiquent leur métier tous les jours.'], ['chip', 'Innovation', 'Simulation solaire, automates, intelligence artificielle, formation en ligne : nous utilisons les bons outils.'], ['leaf', 'Impact', 'Des résultats concrets pour nos clients, nos apprenants et notre environnement.']];
+const engagements = ['Pratique avant tout : « Nous pratiquons autrement »', 'La sécurité dans tout ce que nous faisons', 'Un accompagnement personnalisé', 'Expertise locale, vision internationale'];
+const jalons = [['28 mars 2026', 'Initiation à l’éclairage bâtiment'], ['5 avril 2026', 'Électricité bâtiment : formation 100 % pratique'], ['11 avril 2026', 'Installation des systèmes solaires'], ['24 juillet au 5 août 2026', 'Académie du développement durable et de la gestion environnementale (en ligne)'], ['6 au 8 août 2026', 'La finance pour non-financiers'], ['17 août 2026', 'Étude d’impact environnemental et social (EIES)'], ['2 septembre 2026', 'Sécurité industrielle, 2ème vague'], ['15 septembre 2026', 'Dimensionnement photovoltaïque et hybrides avec PVsyst et HOMER']];
+---
+<Base title="À propos" description="L’histoire, la mission et l’équipe de Poly-Center Mali, centre de formation et prestataire de services à Bamako.">
+  <div class="title"><div class="wrap"><h1>À propos</h1><p>Poly-Center Mali SARL (PCM) : un centre de formation qui est aussi un prestataire de services. Compétence, innovation, impact.</p></div></div>
+
+  <section><div class="wrap story">
+    <div class="rv">
+      <h2>Notre histoire</h2>
+      <p class="lead">Poly-Center Mali est né d’une conviction simple : on apprend mieux en pratiquant. Fondé à Bamako par l’ingénieur en électrotechnique Cheickné SY, le centre réunit sous un même toit une activité de formation et une activité de prestation de services.</p>
+      <p class="lead">Sur le terrain, nos équipes installent, entretiennent et auditent des équipements électriques, industriels et solaires. En salle comme en ligne, elles transmettent ce savoir-faire à des techniciens, des étudiants et des entrepreneurs. Cette double casquette donne à nos formations leur côté concret : ce que nous enseignons, nous le pratiquons.</p>
+      <p class="lead">Autour de l’ingénierie, une équipe complémentaire nous a rejoints : finance et gestion, sécurité industrielle, énergies renouvelables, art oratoire. Aujourd’hui, Poly-Center Mali accompagne particuliers, entreprises et porteurs de projets, à Niamakoro comme en ligne.</p>
+    </div>
+    <figure class="rv" style="--i:1"><img src="/formations/pf1.jpg" alt="Participants et formateurs de Poly-Center Mali" loading="lazy" /><figcaption>« Former aujourd’hui pour impacter demain. »</figcaption></figure>
+  </div></section>
+
+  <section class="soft"><div class="wrap"><div class="stats">{stats.map((s, i) => (
+    <div class="stat rv" style={`--i:${i}`}><b><span data-count={s[0]}>0</span></b><span>{s[1]}</span></div>))}</div></div></section>
+
+  <section><div class="wrap">
+    <div class="head rv"><h2>Ce qui nous guide</h2><p>Trois mots, affichés sur chacune de nos affiches : Compétence, Innovation, Impact.</p></div>
+    <div class="grid">{valeurs.map((v, i) => <div class="card big rv" style={`--i:${i}`}><div class="ill small"><Icon name={v[0]} size={84} /></div><h3>{v[1]}</h3><p>{v[2]}</p></div>)}</div>
+    <ul class="ticks eng rv">{engagements.map((e) => <li>{e}</li>)}</ul>
+  </div></section>
+
+  <section class="soft"><div class="wrap two-cols">
+    <div class="card big navy rv"><span class="pill">Notre mission</span><h3>Former aujourd’hui pour impacter demain</h3><p>Transmettre des compétences utiles, tout de suite, à celles et ceux qui veulent travailler, entreprendre et progresser.</p></div>
+    <div class="card big rv" style="--i:1"><span class="pill">Notre ambition</span><h3>Votre partenaire compétence</h3><p>Faire de l’expertise locale un moteur de développement, avec une vision internationale et des méthodes qui ont fait leurs preuves.</p></div>
+  </div></section>
+
+  <section><div class="wrap">
+    <div class="head rv"><h2>Nos temps forts de 2026</h2><p>Quelques-unes de nos sessions de l’année, en présentiel et en ligne.</p></div>
+    <ol class="tl">{jalons.map((j, i) => <li class="rv" style={`--i:${i % 3}`}><b>{j[0]}</b><span>{j[1]}</span></li>)}</ol>
+    <p class="rv" style="margin-top:28px"><a class="btn" href="/album">Voir les affiches et photos</a></p>
+  </div></section>
+
+  <section class="soft"><div class="wrap two-cols">
+    <div class="rv"><h2>Où nous trouver</h2>
+      <p class="lead">{site.adresse}. Immeuble Tidiani.</p>
+      <p class="lead">{site.telephones.join(' / ')}<br />{site.email}</p>
+      <div class="cta-row" style="margin-top:20px"><a class="btn" href="/contact">Nous contacter</a><a class="btn alt" style="color:var(--navy)" href="/equipe">Rencontrer l’équipe</a></div></div>
+    <div class="rv ill" style="--i:1;height:260px"><Icon name="globe" size={150} /></div>
+  </div></section>
+</Base>
+<script>
+  document.querySelectorAll<HTMLElement>('[data-count]').forEach((el) => {
+    const io = new IntersectionObserver(([e]) => {
+      if (!e.isIntersecting) return; io.disconnect();
+      const n = Number(el.dataset.count); let t0 = 0;
+      const step = (t: number) => { t0 = t0 || t; const p = Math.min((t - t0) / 1300, 1); el.textContent = String(Math.round(n * p)); if (p < 1) requestAnimationFrame(step); };
+      requestAnimationFrame(step);
+    });
+    io.observe(el);
+  });
+</script>

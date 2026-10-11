@@ -1,0 +1,43 @@
+---
+import Base from '../layouts/Base.astro';
+import { album } from '../data/album.js';
+const types = [
+  { id: 'photo', label: 'Photos', titre: 'Photos de nos formations', vide: 'Les photos arrivent bientôt.' },
+  { id: 'terrain', label: 'Sur le terrain', titre: 'Sur le terrain : nos interventions', vide: 'Les photos de terrain arrivent bientôt.' },
+  { id: 'affiche', label: 'Affiches', titre: 'Affiches de nos anciennes formations', vide: 'Les affiches de nos anciennes formations arrivent bientôt.' },
+  { id: 'video', label: 'Vidéos', titre: 'Vidéos de nos formations', vide: 'Les vidéos arrivent bientôt.' },
+];
+const by = (t) => album.filter((a) => a.type === t);
+---
+<Base title="Album souvenir" description="Photos, affiches et vidéos des formations de Poly-Center Mali.">
+  <div class="title"><div class="wrap"><h1>Album souvenir</h1><p>Revivez nos formations et nos interventions en photos, en affiches et en vidéos.</p></div></div>
+  <section><div class="wrap">
+    <div class="filters" role="group" aria-label="Filtrer l’album">
+      <button class="chipb on" data-f="all">Tout <small>{album.length}</small></button>
+      {types.map((t) => <button class="chipb" data-f={t.id}>{t.label} <small>{by(t.id).length}</small></button>)}
+    </div>
+    {types.map((t) => (
+      <div class="alb" data-type={t.id}>
+        <div class="head rv"><h2>{t.titre}</h2></div>
+        {by(t.id).length === 0 ? <div class="empty rv">{t.vide}</div>
+        : t.id === 'video' ? <div class="vids">{by(t.id).map((v, i) => (
+            <figure class="vid rv" style={`--i:${i % 3}`}>
+              {v.youtube ? <iframe src={`https://www.youtube-nocookie.com/embed/${v.youtube}`} title={v.titre} loading="lazy" allowfullscreen></iframe>
+                : <video controls preload="metadata" playsinline src={v.src} poster={v.poster}></video>}
+              <figcaption>{v.titre}</figcaption>
+            </figure>))}</div>
+        : <div class={`gal${t.id === 'affiche' ? ' posters' : ''}`}>{by(t.id).map((a, i) => (
+            <figure class="shot rv" style={`--i:${i % 3}`}><img src={a.src} alt={a.titre} loading="lazy" data-zoom /><figcaption>{a.titre}{a.date ? ` · ${a.date}` : ''}</figcaption></figure>))}</div>}
+      </div>
+    ))}
+  </div></section>
+  <section class="cta"><div class="wrap"><h2>Vous aussi, rejoignez nos prochaines sessions.</h2><p class="lead">Découvrez nos formations et inscrivez-vous.</p><div class="cta-row"><a class="btn" href="/formations">Voir les formations</a></div></div></section>
+</Base>
+<script>
+  const chips = document.querySelectorAll<HTMLElement>('.chipb');
+  chips.forEach((c) => c.addEventListener('click', () => {
+    chips.forEach((x) => x.classList.toggle('on', x === c));
+    const f = c.dataset.f;
+    document.querySelectorAll<HTMLElement>('.alb').forEach((a) => { a.hidden = f !== 'all' && a.dataset.type !== f; });
+  }));
+</script>

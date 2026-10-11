@@ -1,0 +1,76 @@
+---
+import Base from '../layouts/Base.astro';
+import Icon from '../components/Icon.astro';
+import Formations from '../components/Formations.astro';
+import { site, galerie, formations } from '../data/site.js';
+import { team } from '../data/team.js';
+const av = (m) => m.avatar ?? m.photos[0];
+const featured = ['academy', 'art-oratoire', 'securite-industrielle', 'photovoltaique', 'bureautique', 'ia'].map((id) => formations.find((f) => f.id === id));
+const items = ['Installation électrique', 'Maintenance industrielle', 'Énergie solaire', 'Audit de gestion', 'Conseil en gestion', 'Solutions logicielles', 'Sécurité industrielle', 'Entrepreneuriat', 'Art oratoire'];
+const domaines = [
+  { icon: 'solar', pill: 'Technique', t: 'Électricité, maintenance, solaire', d: 'Installation, entretien et audit de vos systèmes électriques, industriels et solaires.', href: '/services', l: 'Voir les services techniques' },
+  { icon: 'chart', pill: 'Gestion', t: 'Audit, conseil, logiciels', d: 'Des outils et un accompagnement concret pour mieux piloter votre entreprise.', href: '/services#gestion', l: 'Voir les services de gestion', navy: true },
+  { icon: 'cap', pill: 'Formation', t: 'Apprendre pour agir', d: 'Art oratoire, entrepreneuriat, gestion, sécurité industrielle et formations techniques.', href: '/formations', l: 'Voir le catalogue' },
+];
+---
+<Base title="Accueil">
+  <section class="hero"><div class="orb o1"></div><div class="orb o2"></div><div class="wrap">
+    <div>
+      <span class="tag">Centre de formation et prestataire de services</span>
+      <h1>Des compétences et des services <span>qui font avancer</span> votre entreprise.</h1>
+      <p class="lead">Poly-Center Mali forme vos équipes, installe et entretient vos équipements, et vous conseille sur la gestion de votre activité.</p>
+      <div class="cta-row"><a class="btn" href="/contact">Demander un devis</a><a class="btn alt" href="/formations">Voir les formations</a></div>
+    </div>
+    <div class="logo-anim" id="logo" role="img" aria-label="Logo Poly-Center Mali" title="Cliquez pour rejouer l’animation">
+      <img class="l-gear" src="/logo/gear.png" alt="" /><img class="l-tool" src="/logo/tool.png" alt="" /><img class="l-text" src="/logo/text.png" alt="" />
+    </div>
+  </div></section>
+
+  <div class="ticker" aria-hidden="true"><div>{[...items, ...items].map((i) => <span>{i}</span>)}</div></div>
+
+  <section><div class="wrap">
+    <div class="head rv"><h2>Trois domaines, un seul interlocuteur.</h2>
+    <p>Nous intervenons sur le terrain, au bureau et en salle de formation.</p></div>
+    <div class="grid">
+      {domaines.map((d, i) => (
+        <div class={`card big rv${d.navy ? ' navy' : ''}`} style={`--i:${i}`}>
+          <div class="ill"><Icon name={d.icon} size={120} /></div>
+          <span class="pill">{d.pill}</span><h3>{d.t}</h3><p>{d.d}</p>
+          <p><a class="lnk" href={d.href}>{d.l} <b>→</b></a></p>
+        </div>
+      ))}
+    </div>
+  </div></section>
+
+  <section class="soft"><div class="wrap">
+    <div class="head rv"><h2>Nos formations en images</h2><p>Quelques moments de nos sessions. Cliquez sur une photo pour l’agrandir.</p></div>
+    <div class="gal">{galerie.map((g, i) => (
+      <figure class="shot rv" style={`--i:${i}`}><img src={`/formations/${g.image}`} alt={g.titre} loading="lazy" data-zoom /><figcaption>{g.titre}</figcaption></figure>
+    ))}</div>
+    <p class="rv" style="text-align:center;margin-top:36px"><a class="btn" href="/album">Voir tout l’album souvenir</a></p>
+  </div></section>
+
+  <section><div class="wrap">
+    <div class="head rv"><h2>Nos formations</h2><p>Cliquez sur une formation pour voir le public, les modalités, le programme et le tarif.</p></div>
+    <Formations list={featured} />
+    <p class="rv" style="text-align:center;margin-top:36px"><a class="btn" href="/formations">Voir les {formations.length} formations</a></p>
+  </div></section>
+
+  <section class="soft"><div class="wrap">
+    <div class="head rv"><h2>Une équipe qui vous accompagne</h2><p>Des ingénieurs, un financier et un formateur, réunis autour d’un même objectif : votre réussite.</p></div>
+    <div class="tm">{team.map((m, i) => (
+      <a href="/equipe" class="rv" style={`--i:${i}`}>
+        <div class="ph">{av(m) ? <img src={`/equipe/${av(m)[0]}`} alt={m.name} style={`object-position:${av(m)[1]}`} loading="lazy" /> : <span class="avatar">{m.initials}</span>}</div>
+        <b>{m.name}</b><span>{m.role}</span>
+      </a>
+    ))}</div>
+    <p class="rv" style="text-align:center;margin-top:36px"><a class="btn" href="/equipe">Découvrir toute l’équipe</a></p>
+  </div></section>
+
+  <section class="cta"><div class="wrap rv">
+    <h2>Parlons de votre projet.</h2>
+    <p class="lead">Dites-nous ce dont vous avez besoin. Nous revenons vers vous avec une proposition claire.</p>
+    <div class="cta-row"><a class="btn" href="/contact">Nous contacter</a><a class="btn alt" href={`https://wa.me/${site.whatsapp}`}>Écrire sur WhatsApp</a></div>
+  </div></section>
+
+</Base>

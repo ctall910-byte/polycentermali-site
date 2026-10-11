@@ -1,0 +1,11 @@
+---
+const { name, size = 64 } = Astro.props;
+const tk = 'M41 14c.7 5.3 3.7 8.5 9 9v7c-3.300 0-6.300-1-9-2.900v13.200A13.300 13.300 0 1 1 27.700 26v7.400a6 6 0 1 0 6 6V14z';
+---
+<svg viewBox="0 0 64 64" width={size} height={size} aria-hidden="true" class="soc-svg">
+  {name === 'TikTok' && <><rect width="64" height="64" rx="16" fill="#010101"/><path d={tk} fill="#25f4ee" transform="translate(-1.800 -1.200)"/><path d={tk} fill="#fe2c55" transform="translate(1.800 1.200)"/><path d={tk} fill="#fff"/></>}
+  {name === 'Instagram' && <><defs><linearGradient id="ig" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#feda75"/><stop offset=".3" stop-color="#fa7e1e"/><stop offset=".6" stop-color="#d62976"/><stop offset=".85" stop-color="#962fbf"/><stop offset="1" stop-color="#4f5bd5"/></linearGradient></defs>
+    <rect width="64" height="64" rx="16" fill="url(#ig)"/><rect x="15" y="15" width="34" height="34" rx="10" fill="none" stroke="#fff" stroke-width="3.500"/><circle cx="32" cy="32" r="8" fill="none" stroke="#fff" stroke-width="3.500"/><circle cx="42" cy="22" r="2.500" fill="#fff"/></>}
+  {name === 'Facebook' && <><rect width="64" height="64" rx="16" fill="#1877f2"/><path d="M35.500 52V35.500h5.600l.9-6.600h-6.500v-4.200c0-1.900.6-3.200 3.300-3.200h3.500v-5.900c-.6-.1-2.700-.3-5.100-.3-5 0-8.400 3.100-8.400 8.700v4.900H22.300v6.600h5.500V52z" fill="#fff"/></>}
+  {name === 'X' && <><rect width="64" height="64" rx="16" fill="#0b0b0b"/><path d="M16 15h9.500L48 49h-9.500z" fill="#fff"/><path d="M48 15 16 49" stroke="#fff" stroke-width="3.800" stroke-linecap="round"/></>}
+</svg>
