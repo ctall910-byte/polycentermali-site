@@ -7,7 +7,7 @@ const wa = `https://wa.me/${site.whatsapp}?text=${encodeURIComponent('Bonjour, j
 const etapes = [['Contact', 'Vous nous écrivez ou nous appelez : nous écoutons votre besoin.'], ['Étude', 'Visite sur place ou analyse de votre situation.'], ['Devis', 'Une proposition claire, avec prix et délais.'], ['Réalisation', 'Nous intervenons, puis nous assurons le suivi.']];
 ---
 <Base title="Services" description="Services techniques, de gestion et de formation proposés par Poly-Center Mali à Bamako.">
-  <div class="title"><div class="wrap"><h1>Nos services</h1><p>{services.length} services techniques, de gestion et de formation. Cliquez sur l’un d’eux pour voir le détail et le tarif indicatif.</p></div></div>
+  <div class="title"><div class="wrap"><h1>Nos services</h1><p>{services.length} services techniques, de gestion et de formation. Cliquez sur l’un d’eux pour voir le détail.</p></div></div>
   <section><div class="wrap">
     <div class="filters" role="group" aria-label="Filtrer les services">
       <button class="chipb on" data-f="all">Tous <small>{services.length}</small></button>
@@ -22,16 +22,16 @@ const etapes = [['Contact', 'Vous nous écrivez ou nous appelez : nous écoutons
   </div></section>
 
   <section><div class="wrap">
-    <div class="head rv"><h2>Formules d’entretien</h2><p>Pour vos installations électriques, industrielles ou solaires : un entretien régulier coûte moins cher qu’une panne. Tarifs indicatifs, adaptés après étude de vos équipements.</p></div>
+    <div class="head rv"><h2>Formules d’entretien</h2><p>Pour vos installations électriques, industrielles ou solaires : un entretien régulier coûte moins cher qu’une panne. Le tarif est établi sur devis, après étude de vos équipements.</p></div>
     <div class="plans">{formules.map((f, i) => (
       <div class={`plan rv${f.vedette ? ' hot' : ''}`} style={`--i:${i}`}>
         {f.vedette && <span class="badge">Recommandée</span>}
-        <h3>{f.t}</h3><p class="pr"><b>{f.prix}</b> <span>{f.unite}</span></p>
+        <h3>{f.t}</h3><p class="pr"><span>{f.slogan}</span></p>
         <ul class="ticks">{f.pts.map((x) => <li>{x}</li>)}</ul>
-        <a class="btn" href={wa} target="_blank" rel="noopener">Choisir cette formule</a>
+        <a class="btn" href={wa} target="_blank" rel="noopener">Demander un devis</a>
       </div>))}
     </div>
-    <p class="lead rv" style="margin-top:28px">Conseil en gestion : séance de 1h30 à partir de 30 000 F, ou forfait mensuel de 4 séances à 100 000 F.</p>
+    <p class="lead rv" style="margin-top:28px">Conseil en gestion : séance de 1h30 ou forfait mensuel de 4 séances, sur devis.</p>
   </div></section>
 
   <section class="cta"><div class="wrap"><h2>Besoin d’un devis ?</h2><p class="lead">Décrivez votre besoin, nous vous répondons rapidement.</p><div class="cta-row"><a class="btn" href="/contact">Demander un devis</a><a class="btn alt" href={`https://wa.me/${site.whatsapp}`}>Écrire sur WhatsApp</a></div></div></section>

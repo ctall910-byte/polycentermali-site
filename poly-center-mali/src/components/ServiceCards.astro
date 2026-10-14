@@ -10,7 +10,6 @@ const wa = (s) => `https://wa.me/${site.whatsapp}?text=${encodeURIComponent(`Bon
       {s.image ? <div class="fphoto"><img src={s.imagePath + s.image} alt="" loading="lazy" /></div> : <div class="ill small"><Icon name={s.icon} size={84} /></div>}
       <h3>{s.t}</h3>
       <p>{s.d}</p>
-      <span class="price">{s.tarif}</span>
       <div class="facts">
         <button class="more" type="button" aria-haspopup="dialog">Voir les détails <b>→</b></button>
         <a class="btn mini" href={wa(s)} target="_blank" rel="noopener">Réserver</a>
@@ -26,9 +25,8 @@ const wa = (s) => `https://wa.me/${site.whatsapp}?text=${encodeURIComponent(`Bon
     <dl class="info">
       <div><dt>Délai</dt><dd>{s.delai}</dd></div>
       <div><dt>Lieu</dt><dd>Chez vous ou dans nos locaux, selon le service</dd></div>
-      <div class="full"><dt>Tarif indicatif</dt><dd><b>{s.tarif}</b>{s.tarifNote ? `, ${s.tarifNote}` : ''}</dd></div>
     </dl>
-    <p class="note">Tarif indicatif : le devis final est établi après étude de votre besoin.</p>
+    <p class="note">Le devis est établi gratuitement après étude de votre besoin.</p>
     <div class="two">
       <div><h4>Ce que nous faisons</h4><ul class="ticks">{s.inclus.map((o) => <li>{o}</li>)}</ul></div>
       <div><h4>Comment ça se passe</h4><ul class="ticks">{s.etapes.map((o) => <li>{o}</li>)}</ul></div>

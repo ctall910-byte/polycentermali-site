@@ -6,6 +6,9 @@ export const site = {
   whatsapp: '22393079287',               // numéro WhatsApp principal (sans le +)
   email: 'polycentermali@gmail.com',
   emailFormulaire: 'ctall910@gmail.com',   // adresse qui reçoit les demandes du formulaire (provisoire)
+  // Clé Web3Forms (voir explications) : si elle est remplie, c'est elle qui envoie les e-mails.
+  // Sinon le formulaire utilise FormSubmit avec l'adresse ci-dessus.
+  web3formsKey: '',
   adresse: 'Niamakoro Cité-UNICEF, près de l’école Chaîne Grise, Bamako',
 };
 // Collez les liens ici : un réseau sans lien n'est pas affiché.

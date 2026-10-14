@@ -31,7 +31,7 @@ const objets = ['M’inscrire à une formation', 'Réserver un entretien ou un r
 
   <section id="formulaire"><div class="wrap">
     <div class="head rv"><h2>Écrivez-nous</h2><p>Une inscription, un rendez-vous, un devis ? Remplissez ce petit formulaire : nous vous répondons rapidement.</p></div>
-    <form class="cform rv" id="cform" data-email={site.emailFormulaire} data-wa={site.whatsapp}>
+    <form class="cform rv" id="cform" data-email={site.emailFormulaire} data-key={site.web3formsKey} data-wa={site.whatsapp}>
       <label>Je souhaite
         <select name="objet" required>{objets.map((o) => <option value={o}>{o}</option>)}</select></label>
       <label>Formation ou service concerné <small>(facultatif)</small>
@@ -65,12 +65,23 @@ const objets = ['M’inscrire à une formation', 'Réserver un entretien ou un r
       const d: Record<string, string> = {};
       fd.forEach((v, k) => { const s = String(v).trim(); if (k !== '_honey' && s) d[k] = s; });
       const sujet = d.sujet ? ` (${d.sujet})` : '';
-      d._subject = `Demande depuis le site : ${d.objet}${sujet}`; d._template = 'table'; d._captcha = 'false';
+      const subject = `Demande depuis le site : ${d.objet}${sujet}`;
       btn.disabled = true; st.className = 'fstatus'; st.textContent = 'Envoi en cours…';
       try {
-        const r = await fetch('https://formsubmit.co/ajax/' + f.dataset.email, { method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, body: JSON.stringify(d) });
-        const j = await r.json();
-        if (!r.ok || !(j.success === true || j.success === 'true')) throw new Error('echec');
+        const key = f.dataset.key;
+        let r: Response;
+        if (key) {
+          // Web3Forms : aucune activation nécessaire
+          const body: Record<string, string> = { ...d, access_key: key, subject, from_name: 'Site Poly-Center Mali' };
+          if (d.nom) body.name = d.nom;
+          r = await fetch('https://api.web3forms.com/submit', { method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, body: JSON.stringify(body) });
+        } else {
+          // FormSubmit : l'adresse doit être activée une fois (e-mail de confirmation)
+          const body = { ...d, _subject: subject, _template: 'table', _captcha: 'false' };
+          r = await fetch('https://formsubmit.co/ajax/' + f.dataset.email, { method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, body: JSON.stringify(body) });
+        }
+        const j = await r.json().catch(() => ({}));
+        if (!r.ok || !(j.success === true || j.success === 'true')) { console.error('Formulaire :', r.status, j); throw new Error('echec'); }
         f.hidden = true; const ok = document.getElementById('fok')!; ok.hidden = false; ok.scrollIntoView({ behavior: 'smooth', block: 'center' });
       } catch {
         const msg = `Bonjour, ${d.objet}.${d.sujet ? ' ' + d.sujet + '.' : ''} Nom : ${d.nom}. Téléphone : ${d.telephone}.${d.message ? ' ' + d.message : ''}`;
