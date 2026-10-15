@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://polycenter-mali.vercel.app/sitemap.xml

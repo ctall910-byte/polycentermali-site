@@ -3,21 +3,55 @@ import '../styles/global.css';
 import PromoBanner from '../components/PromoBanner.astro';
 import LeadCapture from '../components/LeadCapture.astro';
 import { site, reseaux, nav, technique, gestion } from '../data/site.js';
-const { title, description = site.baseline } = Astro.props;
+const { title, description = site.baseline, fullTitle } = Astro.props;
 const path = Astro.url.pathname.replace(/\/$/, '') || '/';
 const cur = (h) => (h === path ? 'page' : undefined);
 const wa = `https://wa.me/${site.whatsapp}`;
+const base = (Astro.site ?? new URL('https://polycenter-mali.vercel.app')).origin;
+const canonical = base + (path === '/' ? '/' : path);
+const pageTitle = fullTitle ?? `${title} | ${site.nom}`;
+const image = `${base}/logo/logo-original.jpg`;
+const sameAs = reseaux.filter((r) => r.url).map((r) => r.url);
+const ld = {
+  '@context': 'https://schema.org',
+  '@type': ['EducationalOrganization', 'LocalBusiness'],
+  '@id': `${base}/#organisation`,
+  name: site.nom,
+  url: `${base}/`,
+  logo: `${base}/logo/icon.png`,
+  image,
+  description: site.baseline,
+  telephone: site.telephones[1] ?? site.telephones[0],
+  email: site.email,
+  address: { '@type': 'PostalAddress', streetAddress: 'Niamakoro Cité-UNICEF, près de l’école Chaîne Grise', addressLocality: 'Bamako', addressCountry: 'ML' },
+  areaServed: { '@type': 'Country', name: 'Mali' },
+  knowsAbout: ['Formation professionnelle', 'Installation électrique', 'Maintenance industrielle', 'Énergie solaire', 'Conseil en gestion'],
+  ...(sameAs.length ? { sameAs } : {}),
+};
 ---
 <!doctype html>
 <html lang="fr">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>{title} | {site.nom}</title>
+  <title>{pageTitle}</title>
   <meta name="description" content={description} />
-  <meta property="og:title" content={`${title} | ${site.nom}`} />
+  <link rel="canonical" href={canonical} />
+  <meta name="robots" content="index, follow, max-image-preview:large" />
+  {site.googleVerification && <meta name="google-site-verification" content={site.googleVerification} />}
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content={site.nom} />
+  <meta property="og:locale" content="fr_FR" />
+  <meta property="og:url" content={canonical} />
+  <meta property="og:title" content={pageTitle} />
   <meta property="og:description" content={description} />
-  <meta property="og:image" content="/logo/logo-original.jpg" />
+  <meta property="og:image" content={image} />
+  <meta property="og:image:alt" content={`Logo ${site.nom}`} />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content={pageTitle} />
+  <meta name="twitter:description" content={description} />
+  <meta name="twitter:image" content={image} />
+  <script type="application/ld+json" set:html={JSON.stringify(ld)} />
   <meta name="theme-color" content="#10194a" />
   <script is:inline>
     document.documentElement.classList.add("js");

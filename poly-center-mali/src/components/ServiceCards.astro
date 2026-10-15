@@ -7,7 +7,7 @@ const wa = (s) => `https://wa.me/${site.whatsapp}?text=${encodeURIComponent(`Bon
 <div class="grid fgrid">
   {services.map((s, i) => (
     <article class="card fcard rv" style={`--i:${i % 4}`} data-cat={s.cat} data-open={`s-${s.id}`} >
-      {s.image ? <div class="fphoto"><img src={s.imagePath + s.image} alt="" loading="lazy" /></div> : <div class="ill small"><Icon name={s.icon} size={84} /></div>}
+      {s.image ? <div class="fphoto"><img src={s.imagePath + s.image} alt={s.t} loading="lazy" /></div> : <div class="ill small"><Icon name={s.icon} size={84} /></div>}
       <h3>{s.t}</h3>
       <p>{s.d}</p>
       <div class="facts">

@@ -7,7 +7,7 @@ const tel = (t) => `tel:${t.replace(/\s/g, '')}`;
 const couleurs = { TikTok: '#25f4ee', Instagram: '#d62976', Facebook: '#1877f2', X: '#555' };
 const objets = ['M’inscrire à une formation', 'Réserver un entretien ou un rendez-vous', 'Demander un devis', 'Poser une question', 'Autre demande'];
 ---
-<Base title="Contact" description="Contacter Poly-Center Mali à Niamakoro, Bamako.">
+<Base title="Contact" description="Contactez Poly-Center Mali à Niamakoro, Bamako : devis gratuit, inscription aux formations, WhatsApp, téléphone et e-mail.">
   <div class="title"><div class="wrap"><h1>Contact</h1><p>Choisissez le moyen le plus simple pour vous.</p><a class="btn" style="margin-top:22px" href="#formulaire">Remplir le formulaire</a></div></div>
   <section><div class="wrap"><div class="contact">
     <div class="card rv"><h3>Téléphone</h3>{site.telephones.map((t) => <a class="tel" href={tel(t)}>{t}</a>)}</div>
