@@ -13,7 +13,7 @@ export const site = {
   // Suivi des visiteurs (facultatif) : identifiant Google Analytics 4, du type 'G-XXXXXXXXXX'.
   gaId: '',
   // Google Search Console : code de vérification (la valeur de content="…" de la balise meta fournie par Google).
-  googleVerification: '',
+  googleVerification: 'BCMHGBCPPof75Th1nNM99lKENSI_Ee0R6esYrkzWdPE',
   // Fenêtre « Restez informé » qui propose aux visiteurs de laisser leurs coordonnées.
   leads: { actif: true, delaiSecondes: 25 },
   adresse: 'Niamakoro Cité-UNICEF, près de l’école Chaîne Grise, Bamako',
