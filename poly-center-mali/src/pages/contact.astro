@@ -11,7 +11,7 @@ const objets = ['M’inscrire à une formation', 'Réserver un entretien ou un r
   <div class="title"><div class="wrap"><h1>Contact</h1><p>Choisissez le moyen le plus simple pour vous.</p><a class="btn" style="margin-top:22px" href="#formulaire">Remplir le formulaire</a></div></div>
   <section><div class="wrap"><div class="contact">
     <div class="card rv"><h3>Téléphone</h3>{site.telephones.map((t) => <a class="tel" href={tel(t)}>{t}</a>)}</div>
-    <a class="card navy rv" style="--i:1" href={`https://wa.me/${site.whatsapp}`}><h3>WhatsApp</h3><p>Écrivez-nous au {site.telephones[0]}</p></a>
+    <a class="card navy rv" style="--i:1" href={`https://wa.me/${site.whatsapp}`}><h3>WhatsApp</h3><p>Écrivez-nous au {site.whatsappAffiche}</p></a>
     <a class="card rv" style="--i:2" href={`mailto:${site.email}`}><h3>E-mail</h3><p>{site.email}</p></a>
     <div class="card navy rv" style="--i:3"><h3>Adresse</h3><p>{site.adresse}</p></div>
   </div></div></section>
@@ -31,7 +31,7 @@ const objets = ['M’inscrire à une formation', 'Réserver un entretien ou un r
 
   <section id="formulaire"><div class="wrap">
     <div class="head rv"><h2>Écrivez-nous</h2><p>Une inscription, un rendez-vous, un devis ? Remplissez ce petit formulaire : nous vous répondons rapidement.</p></div>
-    <form class="cform rv" id="cform" data-email={site.emailFormulaire} data-key={site.web3formsKey} data-wa={site.whatsapp}>
+    <form class="cform rv" id="cform" data-wa={site.whatsapp}>
       <label>Je souhaite
         <select name="objet" required>{objets.map((o) => <option value={o}>{o}</option>)}</select></label>
       <label>Formation ou service concerné <small>(facultatif)</small>
@@ -55,6 +55,7 @@ const objets = ['M’inscrire à une formation', 'Réserver un entretien ou un r
   </div></section>
 </Base>
 <script>
+  import { envoyer, trace, origine } from '../scripts/envoi';
   const f = document.getElementById('cform') as HTMLFormElement | null;
   if (f) {
     const btn = f.querySelector('button[type=submit]') as HTMLButtonElement, st = f.querySelector('.fstatus') as HTMLElement;
@@ -67,27 +68,16 @@ const objets = ['M’inscrire à une formation', 'Réserver un entretien ou un r
       const sujet = d.sujet ? ` (${d.sujet})` : '';
       const subject = `Demande depuis le site : ${d.objet}${sujet}`;
       btn.disabled = true; st.className = 'fstatus'; st.textContent = 'Envoi en cours…';
-      try {
-        const key = f.dataset.key;
-        let r: Response;
-        if (key) {
-          // Web3Forms : aucune activation nécessaire
-          const body: Record<string, string> = { ...d, access_key: key, subject, from_name: 'Site Poly-Center Mali' };
-          if (d.nom) body.name = d.nom;
-          r = await fetch('https://api.web3forms.com/submit', { method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, body: JSON.stringify(body) });
-        } else {
-          // FormSubmit : l'adresse doit être activée une fois (e-mail de confirmation)
-          const body = { ...d, _subject: subject, _template: 'table', _captcha: 'false' };
-          r = await fetch('https://formsubmit.co/ajax/' + f.dataset.email, { method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, body: JSON.stringify(body) });
-        }
-        const j = await r.json().catch(() => ({}));
-        if (!r.ok || !(j.success === true || j.success === 'true')) { console.error('Formulaire :', r.status, j); throw new Error('echec'); }
-        f.hidden = true; const ok = document.getElementById('fok')!; ok.hidden = false; ok.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      } catch {
+      const ok = await envoyer({ ...d, ...origine() }, subject);
+      if (ok) {
+        trace('generate_lead', { type: 'formulaire_contact' });
+        f.hidden = true; const box = document.getElementById('fok')!; box.hidden = false; box.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      } else {
         const msg = `Bonjour, ${d.objet}.${d.sujet ? ' ' + d.sujet + '.' : ''} Nom : ${d.nom}. Téléphone : ${d.telephone}.${d.message ? ' ' + d.message : ''}`;
         st.className = 'fstatus err';
         st.innerHTML = `L’envoi n’a pas abouti. Écrivez-nous directement : <a target="_blank" rel="noopener" href="https://wa.me/${f.dataset.wa}?text=${encodeURIComponent(msg)}">envoyer sur WhatsApp</a>.`;
-      } finally { btn.disabled = false; }
+      }
+      btn.disabled = false;
     });
   }
 </script>

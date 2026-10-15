@@ -2,13 +2,18 @@
 export const site = {
   nom: 'Poly-Center Mali',
   baseline: 'Formation, technique et gestion pour les entreprises du Mali',
-  telephones: ['+223 93 07 92 87', '+223 78 68 09 97'],
-  whatsapp: '22393079287',               // numéro WhatsApp principal (sans le +)
+  telephones: ['+223 93 07 92 87', '+223 64 68 01 52'],
+  whatsapp: '22364680152',               // numéro WhatsApp qui reçoit tous les messages (sans le +)
+  whatsappAffiche: '+223 64 68 01 52',   // numéro WhatsApp tel qu'il est affiché sur le site
   email: 'polycentermali@gmail.com',
   emailFormulaire: 'ctall910@gmail.com',   // adresse qui reçoit les demandes du formulaire (provisoire)
   // Clé Web3Forms (voir explications) : si elle est remplie, c'est elle qui envoie les e-mails.
   // Sinon le formulaire utilise FormSubmit avec l'adresse ci-dessus.
-  web3formsKey: '',
+  web3formsKey: 'ec5c1669-e755-434b-8b97-f5c3b903b0ac',
+  // Suivi des visiteurs (facultatif) : identifiant Google Analytics 4, du type 'G-XXXXXXXXXX'.
+  gaId: '',
+  // Fenêtre « Restez informé » qui propose aux visiteurs de laisser leurs coordonnées.
+  leads: { actif: true, delaiSecondes: 25 },
   adresse: 'Niamakoro Cité-UNICEF, près de l’école Chaîne Grise, Bamako',
 };
 // Collez les liens ici : un réseau sans lien n'est pas affiché.

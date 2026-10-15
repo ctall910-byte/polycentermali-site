@@ -1,0 +1,80 @@
+---
+import { site } from '../data/site.js';
+const delai = site.leads?.delaiSecondes ?? 25;
+---
+<aside id="lead" class="lc" data-delai={delai} data-wa={site.whatsapp} hidden aria-label="Rester en contact">
+  <button class="lc-x" type="button" aria-label="Fermer">×</button>
+  <div class="lc-form">
+    <h4>Restez informé</h4>
+    <p>Laissez-nous votre numéro : nous vous prévenons des prochaines formations et offres.</p>
+    <form id="lform">
+      <input name="nom" placeholder="Votre nom" required autocomplete="name" />
+      <input name="telephone" type="tel" placeholder="Téléphone / WhatsApp (+223 …)" required autocomplete="tel" />
+      <select name="interet" aria-label="Ce qui vous intéresse">
+        <option value="Formations">Je suis intéressé(e) par : les formations</option>
+        <option value="Services techniques">Je suis intéressé(e) par : les services techniques</option>
+        <option value="Gestion et conseil">Je suis intéressé(e) par : la gestion et le conseil</option>
+      </select>
+      <label class="consent"><input type="checkbox" name="consentement" required /> J’accepte que Poly-Center Mali me contacte.</label>
+      <input class="hp" type="text" name="_honey" tabindex="-1" autocomplete="off" aria-hidden="true" />
+      <button class="btn" type="submit">Je veux être informé(e)</button>
+      <p class="fstatus" role="status" aria-live="polite"></p>
+    </form>
+  </div>
+  <div class="lc-ok" hidden><b>Merci !</b><p>Nous vous contacterons très bientôt.</p></div>
+</aside>
+<script>
+  import { envoyer, trace, origine } from '../scripts/envoi';
+  const box = document.getElementById('lead') as HTMLElement | null;
+  const KEY = 'lead';
+  const dejaVu = () => {
+    try {
+      const v = localStorage.getItem(KEY);
+      if (v === 'done') return true;
+      const t = Number(v);
+      return !!t && Date.now() - t < 7 * 24 * 3600 * 1000; // fermé : on ne redemande pas avant 7 jours
+    } catch { return false; }
+  };
+  const surContact = location.pathname.replace(/\/$/, '') === '/contact';
+  if (box && !dejaVu() && !surContact) {
+    let montre = false;
+    const ouvrir = () => {
+      if (montre || dejaVu()) return;
+      if (document.querySelector('dialog[open]')) { setTimeout(ouvrir, 4000); return; }
+      montre = true; box.hidden = false; trace('lead_popup_vu', { page: location.pathname });
+    };
+    setTimeout(ouvrir, (Number(box.dataset.delai) || 25) * 1000);
+    addEventListener('scroll', () => {
+      const h = document.documentElement;
+      if ((h.scrollTop + innerHeight) / h.scrollHeight > 0.6) ouvrir();
+    }, { passive: true });
+
+    box.querySelector('.lc-x')!.addEventListener('click', () => {
+      box.hidden = true; try { localStorage.setItem(KEY, String(Date.now())); } catch {}
+    });
+
+    const f = document.getElementById('lform') as HTMLFormElement, btn = f.querySelector('button[type=submit]') as HTMLButtonElement, st = f.querySelector('.fstatus') as HTMLElement;
+    f.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const fd = new FormData(f);
+      if (fd.get('_honey')) return;
+      const d: Record<string, string> = {};
+      fd.forEach((v, k) => { const s = String(v).trim(); if (k !== '_honey' && s) d[k] = s; });
+      d.consentement = 'oui';
+      btn.disabled = true; st.className = 'fstatus'; st.textContent = 'Envoi en cours…';
+      const ok = await envoyer({ ...d, ...origine() }, `Nouveau contact (liste d’information) : ${d.nom}`);
+      if (ok) {
+        trace('generate_lead', { type: 'popup_contact' });
+        try { localStorage.setItem(KEY, 'done'); } catch {}
+        (box.querySelector('.lc-form') as HTMLElement).hidden = true;
+        (box.querySelector('.lc-ok') as HTMLElement).hidden = false;
+        setTimeout(() => { box.hidden = true; }, 3500);
+      } else {
+        const msg = `Bonjour, je souhaite être informé(e). Nom : ${d.nom}. Téléphone : ${d.telephone}.`;
+        st.className = 'fstatus err';
+        st.innerHTML = `L’envoi n’a pas abouti. <a target="_blank" rel="noopener" href="https://wa.me/${box.dataset.wa}?text=${encodeURIComponent(msg)}">Écrivez-nous sur WhatsApp</a>.`;
+      }
+      btn.disabled = false;
+    });
+  }
+</script>

@@ -1,6 +1,7 @@
 ---
 import '../styles/global.css';
 import PromoBanner from '../components/PromoBanner.astro';
+import LeadCapture from '../components/LeadCapture.astro';
 import { site, reseaux, nav, technique, gestion } from '../data/site.js';
 const { title, description = site.baseline } = Astro.props;
 const path = Astro.url.pathname.replace(/\/$/, '') || '/';
@@ -23,11 +24,16 @@ const wa = `https://wa.me/${site.whatsapp}`;
     try { if (localStorage.getItem("theme") === "dark") document.documentElement.setAttribute("data-theme", "dark"); } catch (e) {}
   </script>
   <link rel="icon" href="/favicon.png" />
+  <!-- Statistiques de visites : Vercel Analytics (à activer dans le tableau de bord Vercel) -->
+  <script is:inline>window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };</script>
+  <script is:inline defer src="/_vercel/insights/script.js"></script>
+  {site.gaId && <script is:inline async src={`https://www.googletagmanager.com/gtag/js?id=${site.gaId}`}></script>}
+  {site.gaId && <script define:vars={{ gaId: site.gaId }}>window.dataLayer = window.dataLayer || []; window.gtag = function () { dataLayer.push(arguments); }; gtag('js', new Date()); gtag('config', gaId);</script>}
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;600;700&family=Barlow+Condensed:wght@700;800&display=swap" rel="stylesheet" />
 </head>
-<body>
+<body data-key={site.web3formsKey} data-email={site.emailFormulaire}>
   <header><div class="wrap bar">
     <a class="brand" href="/"><img src="/logo/icon.png" alt="" />{site.nom}</a>
     <nav class="top" aria-label="Navigation principale">
@@ -43,6 +49,7 @@ const wa = `https://wa.me/${site.whatsapp}`;
     </div>
   </div></header>
   <PromoBanner />
+  {site.leads?.actif && <LeadCapture />}
   <dialog id="lb" class="lb"><button class="x" data-close aria-label="Fermer">×</button><img alt="" /></dialog>
   <main><slot /></main>
   <footer><div class="wrap">
@@ -67,6 +74,15 @@ const wa = `https://wa.me/${site.whatsapp}`;
     <a class="go" href={wa}>WhatsApp</a>
   </nav>
 <script>
+  import { trace } from '../scripts/envoi';
+  document.addEventListener('click', (e) => {
+    const a = (e.target as HTMLElement).closest('a');
+    const h = a?.getAttribute('href') || '';
+    if (h.startsWith('https://wa.me')) trace('whatsapp_click', { page: location.pathname });
+    else if (h.startsWith('tel:')) trace('appel_click', { page: location.pathname });
+    else if (h.startsWith('mailto:')) trace('email_click', { page: location.pathname });
+  });
+
   const io = new IntersectionObserver((es) => es.forEach((e) => {
     if (!e.isIntersecting) return;
     const el = e.target; el.classList.add('in'); io.unobserve(el);
