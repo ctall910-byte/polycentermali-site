@@ -9,7 +9,7 @@ export const site = {
   emailFormulaire: 'ctall910@gmail.com',   // adresse qui reçoit les demandes du formulaire (provisoire)
   // Clé Web3Forms (voir explications) : si elle est remplie, c'est elle qui envoie les e-mails.
   // Sinon le formulaire utilise FormSubmit avec l'adresse ci-dessus.
-  web3formsKey: 'ec5c1669-e755-434b-8b97-f5c3b903b0ac',
+  web3formsKey: '',
   // Suivi des visiteurs (facultatif) : identifiant Google Analytics 4, du type 'G-XXXXXXXXXX'.
   gaId: '',
   // Fenêtre « Restez informé » qui propose aux visiteurs de laisser leurs coordonnées.
